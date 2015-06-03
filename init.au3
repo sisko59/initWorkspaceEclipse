@@ -1,5 +1,6 @@
 #include <MsgBoxConstants.au3>
 #include <GuiTreeView.au3>
+#include "iniManager.au3";gestion du fichier ini
 
 Local Const $iTIMEOUT_PAR_DEFAUT = 2;
 Local $sNomWorkspace = "";
@@ -7,11 +8,10 @@ Local $sNomWorkspace = "";
 main()
 
 Func main()
-   Local $hEclipse = ouvreEclipse()
-   $sNomWorkspace = InputBox("Nom du futur Workspace", "Quel est le nom de ton futur Workspace?")
-
-   ;creationNouveauWorkspace() ;Reste fichier ini
-   ;creationServeurTomcat() ;Fini pour tomcat 7.0
+   ouvreEclipse()
+   $sNomWorkspace = demandeNomPourLeWorkspace()
+   creationNouveauWorkspace()
+   creationServeurTomcat() ;Fini pour tomcat 7.0
    ;importDesPreferences() ;Reste fichier ini
    ;configureLaTargetPlateform()
 EndFunc   ;==>main
@@ -20,15 +20,31 @@ Func ouvreEclipse()
    Local $hEclipse = WinWait("[REGEXPTITLE: - Eclipse]", "", $iTIMEOUT_PAR_DEFAUT)
    verifieEcranPresent($hEclipse, "Eclipse doit être démarré")
    WinActivate($hEclipse)
-   return $hEclipse
+   Return $hEclipse
 EndFunc   ;==>ouvreEclipse
+
+Func demandeNomPourLeWorkspace()
+   Local $sValeur = InputBox("Nom du futur Workspace", "Quel est le nom de ton futur Workspace?")
+   ;En cas d'annulation due la saisie du nom, on n'arrete le programme
+   If ($sValeur = "") Then
+	  Exit
+   EndIf
+   return $sValeur;
+EndFunc
 
 Func creationNouveauWorkspace()
    ;Ouvre le switch de workspace depuis le menu File
    Send("!fwo")
-   Send("^a{DEL}")
-   ;TODO : externaliser dans fichier ini
-   Send("DossierWorkspace\" & $sNomWorkspace)
+   Local $hWorkspace = attendEcran("[TITLE:Workspace Launcher]")
+   verifieEcranPresent($hWorkspace, "L'écran de définiton du workspace devrait être ouvert")
+   ;On renseigne le workspace
+   ControlSend($hWorkspace, "", "Edit1", getDossierWorkspace() & "\" & $sNomWorkspace)
+   ;Send("^a{DEL}")
+   ;Appuye sur OK
+   ControlClick($hWorkspace, "", "Button4")
+   WinWaitClose("[REGEXPTITLE: - Eclipse]")
+   Local $hEclipseRestart = WinWait("[REGEXPTITLE: - Eclipse]")
+   WinActivate($hEclipseRestart)
 EndFunc ;==> creationNouveauWorkspace
 
 Func creationServeurTomcat()
@@ -90,7 +106,7 @@ Func selectionElementDansTreeView($sNomElement, $hParent)
 EndFunc
 
 Func attendEcran($sTitle)
-   return WinWaitActive($sTitle, "", $iTIMEOUT_PAR_DEFAUT)
+   Return WinWaitActive($sTitle, "", $iTIMEOUT_PAR_DEFAUT)
 EndFunc
 
 Func verifieEcranPresent($hEcranAffiche, $sMessageErreur)
