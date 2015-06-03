@@ -11,7 +11,7 @@ Func main()
    ouvreEclipse()
    $sNomWorkspace = demandeNomPourLeWorkspace()
    creationNouveauWorkspace()
-   creationServeurTomcat() ;Fini pour tomcat 7.0
+   ;creationServeurTomcat() ;Fini pour tomcat 7.0
    ;importDesPreferences() ;Reste fichier ini
    ;configureLaTargetPlateform()
 EndFunc   ;==>main
@@ -43,7 +43,10 @@ Func creationNouveauWorkspace()
    ;Appuye sur OK
    ControlClick($hWorkspace, "", "Button4")
    WinWaitClose("[REGEXPTITLE: - Eclipse]")
+   ;On attend qu'eclipse redemarre
    Local $hEclipseRestart = WinWait("[REGEXPTITLE: - Eclipse]")
+   ;On laisse le temps à eclipse de finir de se charger
+   Sleep(5000)
    WinActivate($hEclipseRestart)
 EndFunc ;==> creationNouveauWorkspace
 
