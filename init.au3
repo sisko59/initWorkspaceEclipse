@@ -13,6 +13,7 @@ Func main()
    ;$sNomWorkspace = demandeNomPourLeWorkspace()
    ;creationNouveauWorkspace()
    ;creationServeurTomcat() ;Fini pour tomcat 7.0
+   ;configurationServeurTomcat() ;TODO
    ;importDesPreferences() ;Reste fichier ini
    ;configureLaTargetPlateform()
 EndFunc   ;==>main
@@ -83,8 +84,18 @@ Func creationServeurTomcat()
    Send("{ESC}")
 EndFunc
 
-Func temp()
-Local $hEclipseRestart = WinWait("[REGEXPTITLE: - Eclipse]")
+Func configurationServeurTomcat()
+   ;Affiche  la vue des serveurs
+   Send("!wvo")
+   attendEcran("[TITLE:Show View]")
+   Send("Servers")
+   Send("{TAB}")
+   Send("{ENTER}")
+EndFunc
+
+Func tempDebug()
+   Local $hEclipse = WinWait("[REGEXPTITLE: - Eclipse]")
+   WinActivate($hEclipse)
 
 EndFunc
 
