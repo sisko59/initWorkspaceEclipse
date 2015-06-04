@@ -9,12 +9,12 @@ main()
 
 Func main()
    ouvreEclipse()
-   temp()
+   ;temp()
    ;$sNomWorkspace = demandeNomPourLeWorkspace()
    ;creationNouveauWorkspace()
+   importDesPreferences() ;Reste fichier ini
    ;creationServeurTomcat() ;Fini pour tomcat 7.0
    ;configurationServeurTomcat() ;TODO
-   ;importDesPreferences() ;Reste fichier ini
    ;configureLaTargetPlateform()
 EndFunc   ;==>main
 
@@ -106,9 +106,8 @@ Func importDesPreferences()
    Send("Preferences")
    selectionElementDansTreeView("Preferences", $hImport)
    ;Ecran suivant
-   Send("{ENTER}")
-   ;TODO : mettre dans un fichier ini
-   Send("C:\pref.epf")
+   Send("!n")
+   Send(getEmplacementPreferences())
    ;Finish
    Send("!fi")
    Local $bIsFerme = WinWaitClose("[TITLE:Import]", "", 2)
@@ -116,7 +115,7 @@ Func importDesPreferences()
 EndFunc
 
 Func selectionElementDansTreeView($sNomElement, $hParent)
-   Sleep(200)
+   Sleep(500)
    $treeview=ControlGetHandle($hParent, "", "SysTreeView321") ;1er SysTreeView32, dans la plupart des écrans éclipse 1 seul
    $hItemFound = _GUICtrlTreeView_FindItem($treeview, $sNomElement, True)
    _GUICtrlTreeView_SelectItem($treeview, $hItemFound)
