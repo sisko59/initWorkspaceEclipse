@@ -9,13 +9,13 @@ main()
 
 Func main()
    ouvreEclipse()
-   temp()
+   ;temp()
    ;$sNomWorkspace = demandeNomPourLeWorkspace()
    ;creationNouveauWorkspace()
+   importDesPreferences() ;Reste fichier ini
+   ;configureLaTargetPlateform()
    ;creationServeurTomcat() ;Fini pour tomcat 7.0
    ;configurationServeurTomcat() ;TODO
-   ;importDesPreferences() ;Reste fichier ini
-   ;configureLaTargetPlateform()
 EndFunc   ;==>main
 
 Func ouvreEclipse()
@@ -108,7 +108,7 @@ Func importDesPreferences()
    ;Ecran suivant
    Send("{ENTER}")
    ;TODO : mettre dans un fichier ini
-   Send("C:\pref.epf")
+   Send(getEmplacementPreferences())
    ;Finish
    Send("!fi")
    Local $bIsFerme = WinWaitClose("[TITLE:Import]", "", 2)
