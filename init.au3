@@ -5,22 +5,31 @@
 Local Const $iTIMEOUT_PAR_DEFAUT = 2;
 Local $sNomWorkspace = "";
 
+; pour le moment, se concentrÃ© sur la crÃ©ation d'un workspace pour une application, adaptera ensuite
 main()
 
 Func main()
-   ouvreEclipse()
+   Local $hEclipse = ouvreEclipse()
    ;temp()
    ;$sNomWorkspace = demandeNomPourLeWorkspace()
-   ;creationNouveauWorkspace()
-   importDesPreferences() ;Reste fichier ini
-   ;creationServeurTomcat() ;Fini pour tomcat 7.0
-   ;configurationServeurTomcat() ;TODO
-   ;configureLaTargetPlateform()
+   ;WinActivate($hEclipse)
+   ;creationNouveauWorkspace() ; TODO: valider l'Ã©cran des stats eclipse
+   importDesPreferences()
+   ;creationServeurTomcat() ; TODO:gerer tomcat 6, vÃ©rifier que tomcat utilise la bonne version java8
+   ;checkOutSvnProject() ;TODO: Ã  faire
+   ;importProjectSet() ;TODO: Ã  faire
+   ;checkOutPourApplis() ;TODO: Ã  faire, checkout les serveurs et config en fonction de l'application (les autres projects seront les branches crees)
+   ;mavenUpdate() ;TODO: Ã  faire, avec force update
+   ;projectClean() ;TODO: Ã  faire
+   ;ignoreFichierCommit() ;TODO: ignorer les fichiers settings pour le commit en mettant dans un te
+   ;configurationServeurTomcat() ;TODO :ajouter les serveurs, modifier le timeout
+   ;configureLaTargetPlateform() ; TODO decoche "include required software" et coche "include all environments", (tp4.4: tp-dev et updatesite)
+   ;configureBDD() ;TODO: pointe les serveurs sur la base de dev
 EndFunc   ;==>main
 
 Func ouvreEclipse()
    Local $hEclipse = WinWait("[REGEXPTITLE: - Eclipse]", "", $iTIMEOUT_PAR_DEFAUT)
-   verifieEcranPresent($hEclipse, "Eclipse doit être démarré")
+   verifieEcranPresent($hEclipse, "Eclipse doit Ãªtre dÃ©marrÃ©")
    WinActivate($hEclipse)
    Return $hEclipse
 EndFunc   ;==>ouvreEclipse
@@ -38,7 +47,7 @@ Func creationNouveauWorkspace()
    ;Ouvre le switch de workspace depuis le menu File
    Send("!fwo")
    Local $hWorkspace = attendEcran("[TITLE:Workspace Launcher]")
-   verifieEcranPresent($hWorkspace, "L'écran de définiton du workspace devrait être ouvert")
+   verifieEcranPresent($hWorkspace, "L'Ã©cran de dÃ©finiton du workspace devrait Ãªtre ouvert")
    ;On renseigne le workspace
    ControlSend($hWorkspace, "", "Edit1", getDossierWorkspace() & "\" & $sNomWorkspace)
    ;Send("^a{DEL}")
@@ -47,10 +56,10 @@ Func creationNouveauWorkspace()
    WinWaitClose("[REGEXPTITLE: - Eclipse]")
    ;On attend qu'eclipse redemarre
    Local $hEclipseRestart = WinWait("[REGEXPTITLE: - Eclipse]")
-   ;On laisse le temps à eclipse de finir de se charger
+   ;On laisse le temps Ã  eclipse de finir de se charger
    Sleep(5000)
    WinActivate($hEclipseRestart)
-   ;ferme l'écran de bienvenue
+   ;ferme l'Ã©cran de bienvenue
    ControlClick($hEclipseRestart, "", "SWT_Window03", "left", 1, 80, 12)
 EndFunc ;==> creationNouveauWorkspace
 
@@ -58,29 +67,30 @@ Func creationServeurTomcat()
    ;Ouvre la config serveur
    Send("!wp")
    Local $hPreferences = attendEcran("[TITLE:Preferences]")
-   verifieEcranPresent($hPreferences, "Les préférences devrait être ouvert")
+   verifieEcranPresent($hPreferences, "Les prÃ©fÃ©rences devrait Ãªtre ouvert")
 
-   ;Sélectionne le Runtime Environment
+   ;SÃ©lectionne le Runtime Environment
    Send("Server")
    Sleep(500)
    selectionElementDansTreeView("Runtime Environment", $hPreferences)
 
-   ;Ouvre l'écran de création de server
+   ;Ouvre l'Ã©cran de crÃ©ation de server
    Send("!a")
    Local $hServeurs = attendEcran("[TITLE:New Server Runtime]")
-   ;TODO: conditionné par rapport à la tp, la sélection du Tomcat v6 ou v7
+   ;TODO: conditionnÃ© par rapport Ã  la tp, la sÃ©lection du Tomcat v6 ou v7
    selectionElementDansTreeView("Apache Tomcat v7.0", $hServeurs)
 
    ;Appuye sur le bouton Next
    Send("!n")
    Sleep(200)
    Send("{TAB}")
-   ;On sélectionne au cas où du texte est présent
+   ;On sÃ©lectionne au cas oÃ¹ du texte est prÃ©sent
    Send("^a")
-   Send("C:\francis\dev\eclipse-jee\serverTomcat")
+   ;TODO : conditionne sur la tp
+   Send(getEmplacementTomcat7())
    Send("!f")
    WinWaitClose($hServeurs)
-   ;Valide l'écran de préférence
+   ;Valide l'Ã©cran de prÃ©fÃ©rence
    Send("{ESC}")
 EndFunc
 
@@ -102,21 +112,23 @@ EndFunc
 Func importDesPreferences()
    Send("!fi")
    Local $hImport = attendEcran("[TITLE:Import]")
-   verifieEcranPresent($hImport, "L'écran d'import devrait être ouvert")
+   verifieEcranPresent($hImport, "L'Ã©cran d'import devrait Ãªtre ouvert")
    Send("Preferences")
    selectionElementDansTreeView("Preferences", $hImport)
    ;Ecran suivant
    Send("!n")
    Send(getEmplacementPreferences())
+   ;attend le chargement
+   Sleep(500)
    ;Finish
    Send("!fi")
    Local $bIsFerme = WinWaitClose("[TITLE:Import]", "", 2)
-   verifieEcranFerme($bIsFerme, "L'écran d'import devrait être fermé")
+   verifieEcranFerme($bIsFerme, "L'Ã©cran d'import devrait Ãªtre fermÃ©")
 EndFunc
 
 Func selectionElementDansTreeView($sNomElement, $hParent)
    Sleep(500)
-   $treeview=ControlGetHandle($hParent, "", "SysTreeView321") ;1er SysTreeView32, dans la plupart des écrans éclipse 1 seul
+   $treeview=ControlGetHandle($hParent, "", "SysTreeView321") ;1er SysTreeView32, dans la plupart des Ã©crans Ã©clipse 1 seul
    $hItemFound = _GUICtrlTreeView_FindItem($treeview, $sNomElement, True)
    _GUICtrlTreeView_SelectItem($treeview, $hItemFound)
    Sleep(200)
@@ -137,7 +149,7 @@ EndFunc
 Func util_messageSiZero($hValeur, $sMessageErreur)
    If $hValeur = 0 Then
       MsgBox($MB_SYSTEMMODAL, "Erreur", $sMessageErreur)
-	  ;on arrête le programme
+	  ;on arrÃªte le programme
       Exit
    EndIf
 EndFunc
