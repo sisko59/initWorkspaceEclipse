@@ -14,7 +14,7 @@ Func main()
    ;$sNomWorkspace = demandeNomPourLeWorkspace()
    ;WinActivate($hEclipse)
    ;creationNouveauWorkspace() ; TODO: valider l'écran des stats eclipse
-   importDesPreferences()
+   importDesPreferences() ; TODO: ajouter desactivation des xml (preference/validation/XML Validator)
    ;creationServeurTomcat() ; TODO:gerer tomcat 6, vérifier que tomcat utilise la bonne version java8
    ;checkOutSvnProject() ;TODO: à faire
    ;importProjectSet() ;TODO: à faire
