@@ -26,6 +26,7 @@ Func main()
    ;configurationServeurTomcat() ;TODO :ajouter les serveurs, modifier le timeout
    ;configureLaTargetPlateform() ; TODO decoche "include required software" et coche "include all environments", (tp4.4: tp-dev et updatesite)
    ;configureBDD() ;TODO: pointe les serveurs sur la base de dev
+   ;importLauncher() ;TODO: pour plm, kasar
 EndFunc   ;==>main
 
 Func ouvreEclipse()
