@@ -27,6 +27,7 @@ Func main()
    ;configureLaTargetPlateform() ; TODO decoche "include required software" et coche "include all environments", (tp4.4: tp-dev et updatesite)
    ;configureBDD() ;TODO: pointe les serveurs sur la base de dev
    ;importLauncher() ;TODO: pour plm, kasar
+   ;configureLauncherPLM() ;TODO: démarrer une fois PLM, ajouter les plugins manquant, ajouter tous les plugins batik (1.6 et 1.7)
 EndFunc   ;==>main
 
 Func ouvreEclipse()
