@@ -15,7 +15,8 @@ Func main()
    ;WinActivate($hEclipse)
    ;creationNouveauWorkspace() ; TODO: valider l'écran des stats eclipse
    importDesPreferences() ; TODO: ajouter desactivation des xml (preference/validation/XML Validator)
-   ;creationServeurTomcat() ; TODO:gerer tomcat 6, vérifier que tomcat utilise la bonne version java8
+   ;selectionnerJava() ;TODO
+   ;creationServeurTomcat() ; TODO:gerer tomcat 7, vérifier que tomcat utilise la bonne version java8
    ;checkOutSvnProject() ;TODO: à faire
    ;importProjectSet() ;TODO: à faire
    ;checkOutPourApplis() ;TODO: à faire, checkout les serveurs et config en fonction de l'application (les autres projects seront les branches crees)
